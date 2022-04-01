@@ -15,7 +15,7 @@ and their amount of money.
 import unittest
 
 # My preferred method of verifying data such as the rating of the movie
-# is best done with dictionaries and lists.
+# is with dictionaries and lists.
 
 # In this program, I take in the age as an integer, whether
 # the parent is present as a boolean, and how much cash they have as a float.
@@ -26,7 +26,7 @@ import unittest
 # take action.
 
 
-class TestStringMethods(unittest.TestCase):
+class Tests(unittest.TestCase):
     def test_age(self):
         # Even if the parent is not present, if child is over 16,
         # they should have access to R-rated movies
@@ -41,7 +41,7 @@ class TestStringMethods(unittest.TestCase):
         self.assertListEqual(money_verifier(10.49), ["Matinee"])
         # Special case is when the money is 0, it must return False,
         # meaning that there is not enough money to purchase a ticket
-        self.assertListEqual(money_verifier(0.0), [False])
+        self.assertListEqual(money_verifier(0.0), [])
 
 
 def age_verifier(age: int, parent: bool) -> list:
@@ -81,16 +81,17 @@ def money_verifier(cash: float) -> list:
     elif cash >= 7.50:
         return ["Matinee"]
     else:
-        return [False]
+        return []
 
 
 def prompt_customer() -> dict:
     # Prompts the customer
     U_AGE = int(input("What is your age? "))
-    # If the person is over 16, does not need any parent.
+    # If the person is over 16, does not need any parent,
+    # thus can skip to setting the cash amount.
     if U_AGE >= 16:
-        # Sets U_PARENT as true, since 1. it does not matter,
-        # and 2, I don't know how to make optional parameters.
+        # Sets U_PARENT as true, since it does not matter,
+        # and I don't know how to make optional parameters.
         U_PARENT = True
     else:
         U_PARENT = bool(input("Do you have a parent with you?"))

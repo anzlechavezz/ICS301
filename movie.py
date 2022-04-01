@@ -1,7 +1,7 @@
-import unittest
 """
-Write an algorithm or pseudocode and  flowchart that tells the user what type
-of movie they can attend based on their age, if they are with their parents, 
+ALGORITHM_MOVIETYPE - Anzle Chavez
+Write an algorithm or pseudocode and flowchart that tells the user what type
+of movie they can attend based on their age, if they are with their parents,
 and their amount of money.
 
 - Under 13: G
@@ -9,18 +9,38 @@ and their amount of money.
 - 13 and Over and Under 16 G, PG
 - 13 and Over and Under 16 w/ parent G, PG, R
 - 16 and Over G, PG, R
-- Matinee: .50
-- Evening: .50
+- Matinee: 7.50
+- Evening: 10.50
 """
+import unittest
+
+# My preferred method of verifying data such as the rating of the movie
+# is best done with dictionaries and lists.
+
+# In this program, I take in the age as an integer, whether
+# the parent is present as a boolean, and how much cash they have as a float.
+# From both functions, age_verifier, and money_verifier, it returns a list of
+# the available options. This is very useful when making a program because
+# instead of filtering through random strings, code can just check for the
+# presence of an element such as an "R" movie, and from that result,
+# take action.
 
 
 class TestStringMethods(unittest.TestCase):
     def test_age(self):
-        self.assertListEqual(age_verifier(16, True), ["G", "PG", "R"])
-        self.assertListEqual(age_verifier(13, True), ["G", "PG"])
+        # Even if the parent is not present, if child is over 16,
+        # they should have access to R-rated movies
+        self.assertListEqual(age_verifier(16, False), ["G", "PG", "R"])
+        # Children exactly 12 with a parent should be able to see PG movies
+        # but NOT R-movies.
+        self.assertListEqual(age_verifier(12, True), ["G", "PG"])
 
     def test_money(self):
-        self.assertListEqual(money_verifier(12.0), ["Matinee", "Evening"])
+        # If the person has exactly 10.49, they do not have enough to
+        # see the Matinee and the evening show.
+        self.assertListEqual(money_verifier(10.49), ["Matinee"])
+        # Special case is when the money is 0, it must return False,
+        # meaning that there is not enough money to purchase a ticket
         self.assertListEqual(money_verifier(0.0), [False])
 
 
@@ -30,10 +50,10 @@ def age_verifier(age: int, parent: bool) -> list:
     Args:
         age (int): age of person
         parent (bool): whether the person has a parent or not
-    Returns:\n
+    Returns:
         list: returns list of available movies
     """
-    if age > 16:
+    if age >= 16:
         return ["G", "PG", "R"]
     elif age >= 13:
         if parent:
@@ -49,10 +69,10 @@ def age_verifier(age: int, parent: bool) -> list:
 
 def money_verifier(cash: float) -> list:
     """Verifies what tickets the amount of cash could purchase.\n
-    
+
     Args:
         cash (float): Cash given by customer\n
-    
+
     Returns:
         str: Returns possible tickets from matinee and/or evening
     """
@@ -65,9 +85,16 @@ def money_verifier(cash: float) -> list:
 
 
 def prompt_customer() -> dict:
-    U_CASH = float(input("How much cash will you bring? "))
+    # Prompts the customer
     U_AGE = int(input("What is your age? "))
-    U_PARENT = bool(input("Do you have a parent with you?"))
+    # If the person is over 16, does not need any parent.
+    if U_AGE >= 16:
+        # Sets U_PARENT as true, since 1. it does not matter,
+        # and 2, I don't know how to make optional parameters.
+        U_PARENT = True
+    else:
+        U_PARENT = bool(input("Do you have a parent with you?"))
+    U_CASH = float(input("How much cash will you bring? "))
 
     result = {
         "cash": U_CASH,
@@ -78,16 +105,30 @@ def prompt_customer() -> dict:
     return result
 
 
-# unittest.main()
 if __name__ == "__main__":
+    # make 4 constants:
+    # USER: parent constant returning the others in the hashmap.
+    # CASH: amount of cash as a float
+    # AGE: age in int
+    # PARENT: boolean whether the parent is present
     USER = prompt_customer()
     CASH = USER["cash"]
     AGE = USER["age"]
-    PARENT = USER["parent"] 
+    PARENT = USER["parent"]
 
-    allowed_movies = age_verifier(AGE, PARENT)
-    allowed_tickets = money_verifier(CASH)
+    # Create two constants and pass in the created variables.
+    # ALLOWED_MOVIES: takes in the age and the parent bool
+    # ALLOWED_TICKTES: verifies the cash given
+    ALLOWED_MOVIES = age_verifier(AGE, PARENT)
+    ALLOWED_TICKETS = money_verifier(CASH)
 
-    print(f"For a {AGE} year(s) old with {CASH}$\n{allowed_movies}, {allowed_tickets}")
+    # Print out age and cash, then the allowed movies and tickets
+    print(f"For a {AGE} year old with {CASH}$ and parent = {PARENT}\n")
 
+    # While I do see the value in using a for loop to iterate
+    # through the array and displaying all the values like that,
+    # the brackets around the strings are not all that ugly.
+    print(f"{ALLOWED_MOVIES}, {ALLOWED_TICKETS}")
+
+    # Runs the test declared up top.
     unittest.main()
